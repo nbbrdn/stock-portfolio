@@ -1,16 +1,17 @@
-from flask import Flask, escape
+from flask import Flask, escape, render_template
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    return 'Hello World!'
+    return render_template('index.html')
 
 
 @app.route('/about')
 def about():
-    return '<h2>About this application...</h2>'
+    # return render_template('about.html', company_name='TestDriven.io')
+    return render_template('about.html')
 
 
 @app.route('/stocks/')
