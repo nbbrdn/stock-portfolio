@@ -1,4 +1,4 @@
-from flask import Flask, escape, render_template, request
+from flask import Flask, escape, render_template, redirect, request, session, url_for
 from pydantic import BaseModel, validator
 
 
@@ -16,6 +16,8 @@ class StockModel(BaseModel):
 
 app = Flask(__name__)
 
+app.secret_key = 'BAD_SECRET_KEY'
+
 
 @app.route('/')
 def index():
@@ -29,8 +31,8 @@ def about():
 
 
 @app.route('/stocks/')
-def stocks():
-    return '<h2>Stocks List</h2>'
+def list_stocks():
+    return render_template('stocks.html')
 
 
 @app.route('/hello/<message>')
@@ -56,6 +58,12 @@ def add_stock():
                 purchase_price=request.form['purchase_price'],
             )
             print(stock_data)
+
+            # Save the form data to the session object
+            session['stock_symbol'] = stock_data.stock_symbol
+            session['number_of_shares'] = stock_data.number_of_shares
+            session['purchase_price'] = stock_data.purchase_price
+            return redirect(url_for('list_stocks'))
         except ValueError as e:
             print(e)
 
