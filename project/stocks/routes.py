@@ -17,7 +17,7 @@ class StockModel(BaseModel):
 
     stock_symbol: str
     number_of_shares: int
-    purchise_price: float
+    purchase_price: float
 
     @validator('stock_symbol')
     def stock_symbol_check(cls, value):
@@ -46,7 +46,7 @@ def add_stock():
             # Save the form data to the session object
             session['stock_symbol'] = stock_data.stock_symbol
             session['number_of_shares'] = stock_data.number_of_shares
-            session['purchase_price'] = stock_data.purchise_price
+            session['purchase_price'] = stock_data.purchase_price
 
             flash(f'Added new stock ({stock_data.stock_symbol})!', 'success')
             current_app.logger.info(
