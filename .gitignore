@@ -12,3 +12,8 @@ __pycache__/
 env/
 
 .vscode/
+
+instance/*.cfg
+instance/*.db
+instance/*.log
+instance/*.log*
