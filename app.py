@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, request, session, url_for, flash
 from markupsafe import escape
 from pydantic import BaseModel, ValidationError, field_validator
 
@@ -29,6 +29,7 @@ def index():
 
 @app.route("/about")
 def about():
+    flash("Thanks for learnig about this site!", "info")
     return render_template("about.html", company_name="Bayborodin and co.")
 
 
@@ -58,6 +59,9 @@ def add_stock():
             session["stock_symbol"] = stock_data.stock_symbol
             session["number_of_shares"] = stock_data.number_of_shares
             session["purchase_price"] = stock_data.purchase_price
+
+            flash(f"Added new stock ({stock_data.stock_symbol})!", "success")
+
             return redirect(url_for("list_stocks"))
         except ValidationError as e:
             print(e)
