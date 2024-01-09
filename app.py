@@ -1,4 +1,7 @@
+import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask, redirect, render_template, request, session, url_for, flash
+from flask.logging import default_handler
 from markupsafe import escape
 from pydantic import BaseModel, ValidationError, field_validator
 
@@ -19,11 +22,26 @@ class StockModel(BaseModel):
 
 app = Flask(__name__)
 
+app.logger.removeHandler(default_handler)
+
+file_handler = RotatingFileHandler(
+    "stock-portfolio.log", maxBytes=16384, backupCount=20
+)
+file_formatter = logging.Formatter(
+    "%(asctime)s %(levelname)s: %(message)s [in %(filename)s:%(lineno)d]"
+)
+file_handler.setFormatter(file_formatter)
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+
+app.logger.info("Starting the Stock Portfolio App...")
+
 app.secret_key = "BAD_SECRET_KEY"
 
 
 @app.route("/")
 def index():
+    app.logger.info("Calling the index() function.")
     return render_template("index.html")
 
 
@@ -54,13 +72,13 @@ def add_stock():
                 number_of_shares=request.form["number_of_shares"],
                 purchase_price=request.form["purchase_price"],
             )
-            print(stock_data)
 
             session["stock_symbol"] = stock_data.stock_symbol
             session["number_of_shares"] = stock_data.number_of_shares
             session["purchase_price"] = stock_data.purchase_price
 
             flash(f"Added new stock ({stock_data.stock_symbol})!", "success")
+            app.logger.info(f"Added new stock ({request.form['stock_symbol']})!")
 
             return redirect(url_for("list_stocks"))
         except ValidationError as e:
