@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 from markupsafe import escape
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, ValidationError, field_validator
 
 
 class StockModel(BaseModel):
@@ -10,7 +10,7 @@ class StockModel(BaseModel):
     number_of_shares: int
     purchase_price: float
 
-    @validator("stock_symbol")
+    @field_validator("stock_symbol")
     def stock_symbol_check(cls, value):
         if not value.isalpha() or len(value) > 5:
             raise ValueError("Stock symbol must be 1-5 characters")
