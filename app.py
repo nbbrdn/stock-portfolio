@@ -1,3 +1,4 @@
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask
@@ -6,12 +7,13 @@ from flask.logging import default_handler
 
 app = Flask(__name__)
 
-app.secret_key = "BAD_SECRET_KEY"
+config_type = os.getenv("CONFIG_TYPE", default="config.DevelopmentConfig")
+app.config.from_object(config_type)
 
 app.logger.removeHandler(default_handler)
 
 file_handler = RotatingFileHandler(
-    "stock-portfolio.log", maxBytes=16384, backupCount=20
+    "instance/stock-portfolio.log", maxBytes=16384, backupCount=20
 )
 file_formatter = logging.Formatter(
     "%(asctime)s %(levelname)s: %(message)s [in %(filename)s:%(lineno)d]"
