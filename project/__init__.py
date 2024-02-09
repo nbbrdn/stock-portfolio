@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from logging.handlers import RotatingFileHandler
 import logging
 from flask.logging import default_handler
@@ -14,6 +14,7 @@ def create_app():
 
     register_blueprints(app)
     configure_logging(app)
+    register_error_page(app)
 
     return app
 
@@ -40,3 +41,13 @@ def configure_logging(app):
     app.logger.removeHandler(default_handler)
 
     app.logger.info("Starting the Stock Portfolio App...")
+
+
+def register_error_page(app):
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("404.html"), 404
+
+    @app.errorhandler(405)
+    def method_not_allowed(e):
+        return render_template("405.html"), 405
